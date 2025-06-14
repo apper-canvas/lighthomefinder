@@ -10,11 +10,12 @@ const Layout = () => {
   const [savedCount, setSavedCount] = useState(0)
   const location = useLocation()
 
-  useEffect(() => {
+useEffect(() => {
     const loadSavedCount = async () => {
       try {
-        const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]')
-        setSavedCount(savedProperties.length)
+        // Get saved count from collections instead of localStorage
+        const collections = await propertyService.getAll({ type: 'saved' })
+        setSavedCount(collections.length)
       } catch (error) {
         setSavedCount(0)
       }

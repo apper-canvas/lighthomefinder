@@ -1,103 +1,242 @@
-import collections from '../mockData/collections.json'
-
-const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms))
+import { toast } from 'react-toastify'
 
 class CollectionService {
   constructor() {
-    this.data = [...collections]
-    this.loadFromStorage()
+    this.tableName = 'collection'
+    this.apperClient = null
+    this.initializeClient()
   }
 
-  loadFromStorage() {
-    try {
-      const stored = localStorage.getItem('collections')
-      if (stored) {
-        this.data = JSON.parse(stored)
-      }
-    } catch (error) {
-      console.error('Error loading collections:', error)
+  initializeClient() {
+    const { ApperClient } = window.ApperSDK
+    this.apperClient = new ApperClient({
+      apperProjectId: import.meta.env.VITE_APPER_PROJECT_ID,
+      apperPublicKey: import.meta.env.VITE_APPER_PUBLIC_KEY
+    })
+  }
+
+  // Transform database collection to UI format
+  transformFromDatabase(dbCollection) {
+    if (!dbCollection) return null
+    
+    return {
+      id: dbCollection.Id,
+      name: dbCollection.Name || '',
+      propertyIds: dbCollection.property_ids ? dbCollection.property_ids.split(',').filter(Boolean) : [],
+      createdAt: dbCollection.created_at || dbCollection.CreatedOn || new Date().toISOString()
     }
   }
 
-  saveToStorage() {
-    try {
-      localStorage.setItem('collections', JSON.stringify(this.data))
-    } catch (error) {
-      console.error('Error saving collections:', error)
+  // Transform UI collection to database format
+  transformToDatabase(uiCollection) {
+    return {
+      Name: uiCollection.name || '',
+      property_ids: Array.isArray(uiCollection.propertyIds) ? uiCollection.propertyIds.join(',') : (uiCollection.propertyIds || ''),
+      created_at: uiCollection.createdAt || new Date().toISOString()
     }
   }
 
   async getAll() {
-    await delay(200)
-    return [...this.data]
+    try {
+      const params = {
+        Fields: ['Id', 'Name', 'Tags', 'Owner', 'property_ids', 'created_at', 'CreatedOn'],
+        PagingInfo: {
+          Limit: 100,
+          Offset: 0
+        }
+      }
+
+      const response = await this.apperClient.fetchRecords(this.tableName, params)
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return []
+      }
+
+      return (response.data || []).map(collection => this.transformFromDatabase(collection))
+    } catch (error) {
+      console.error('Error fetching collections:', error)
+      toast.error('Failed to load collections')
+      return []
+    }
   }
 
   async getById(id) {
-    await delay(150)
-    const collection = this.data.find(c => c.id === id)
-    if (!collection) {
-      throw new Error('Collection not found')
+    try {
+      const params = {
+        fields: ['Id', 'Name', 'Tags', 'Owner', 'property_ids', 'created_at', 'CreatedOn']
+      }
+
+      const response = await this.apperClient.getRecordById(this.tableName, id, params)
+
+      if (!response.success) {
+        console.error(response.message)
+        throw new Error(response.message)
+      }
+
+      if (!response.data) {
+        throw new Error('Collection not found')
+      }
+
+      return this.transformFromDatabase(response.data)
+    } catch (error) {
+      console.error(`Error fetching collection with ID ${id}:`, error)
+      throw error
     }
-    return { ...collection }
   }
 
   async create(collectionData) {
-    await delay(300)
-    const newCollection = {
-      id: Date.now().toString(),
-      ...collectionData,
-      createdAt: new Date().toISOString(),
-      propertyIds: collectionData.propertyIds || []
+    try {
+      const params = {
+        records: [this.transformToDatabase(collectionData)]
+      }
+
+      const response = await this.apperClient.createRecord(this.tableName, params)
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        throw new Error(response.message)
+      }
+
+      if (response.results) {
+        const successfulRecords = response.results.filter(result => result.success)
+        const failedRecords = response.results.filter(result => !result.success)
+
+        if (failedRecords.length > 0) {
+          console.error(`Failed to create ${failedRecords.length} records:${JSON.stringify(failedRecords)}`)
+          
+          failedRecords.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`)
+            })
+            if (record.message) toast.error(record.message)
+          })
+        }
+
+        if (successfulRecords.length > 0) {
+          toast.success('Collection created successfully!')
+          return this.transformFromDatabase(successfulRecords[0].data)
+        }
+      }
+
+      throw new Error('Failed to create collection')
+    } catch (error) {
+      console.error('Error creating collection:', error)
+      throw error
     }
-    this.data.unshift(newCollection)
-    this.saveToStorage()
-    return { ...newCollection }
   }
 
-  async update(id, updates) {
-    await delay(250)
-    const index = this.data.findIndex(c => c.id === id)
-    if (index === -1) {
-      throw new Error('Collection not found')
+  async update(id, collectionData) {
+    try {
+      const updateData = this.transformToDatabase(collectionData)
+      updateData.Id = id
+
+      const params = {
+        records: [updateData]
+      }
+
+      const response = await this.apperClient.updateRecord(this.tableName, params)
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        throw new Error(response.message)
+      }
+
+      if (response.results) {
+        const successfulUpdates = response.results.filter(result => result.success)
+        const failedUpdates = response.results.filter(result => !result.success)
+
+        if (failedUpdates.length > 0) {
+          console.error(`Failed to update ${failedUpdates.length} records:${JSON.stringify(failedUpdates)}`)
+          
+          failedUpdates.forEach(record => {
+            record.errors?.forEach(error => {
+              toast.error(`${error.fieldLabel}: ${error.message}`)
+            })
+            if (record.message) toast.error(record.message)
+          })
+        }
+
+        if (successfulUpdates.length > 0) {
+          toast.success('Collection updated successfully!')
+          return this.transformFromDatabase(successfulUpdates[0].data)
+        }
+      }
+
+      throw new Error('Failed to update collection')
+    } catch (error) {
+      console.error('Error updating collection:', error)
+      throw error
     }
-    this.data[index] = { ...this.data[index], ...updates }
-    this.saveToStorage()
-    return { ...this.data[index] }
   }
 
   async delete(id) {
-    await delay(200)
-    const index = this.data.findIndex(c => c.id === id)
-    if (index === -1) {
-      throw new Error('Collection not found')
+    try {
+      const params = {
+        RecordIds: [id]
+      }
+
+      const response = await this.apperClient.deleteRecord(this.tableName, params)
+
+      if (!response.success) {
+        console.error(response.message)
+        toast.error(response.message)
+        return false
+      }
+
+      if (response.results) {
+        const successfulDeletions = response.results.filter(result => result.success)
+        const failedDeletions = response.results.filter(result => !result.success)
+
+        if (failedDeletions.length > 0) {
+          console.error(`Failed to delete ${failedDeletions.length} records:${JSON.stringify(failedDeletions)}`)
+          
+          failedDeletions.forEach(record => {
+            if (record.message) toast.error(record.message)
+          })
+        }
+
+        if (successfulDeletions.length > 0) {
+          toast.success('Collection deleted successfully!')
+          return true
+        }
+      }
+
+      return false
+    } catch (error) {
+      console.error('Error deleting collection:', error)
+      throw error
     }
-    this.data.splice(index, 1)
-    this.saveToStorage()
-    return true
   }
 
   async addProperty(collectionId, propertyId) {
-    await delay(200)
-    const collection = this.data.find(c => c.id === collectionId)
-    if (!collection) {
-      throw new Error('Collection not found')
+    try {
+      // Get current collection
+      const collection = await this.getById(collectionId)
+      if (!collection.propertyIds.includes(propertyId)) {
+        collection.propertyIds.push(propertyId)
+        return await this.update(collectionId, collection)
+      }
+      return collection
+    } catch (error) {
+      console.error('Error adding property to collection:', error)
+      throw error
     }
-    if (!collection.propertyIds.includes(propertyId)) {
-      collection.propertyIds.push(propertyId)
-      this.saveToStorage()
-    }
-    return { ...collection }
   }
 
   async removeProperty(collectionId, propertyId) {
-    await delay(200)
-    const collection = this.data.find(c => c.id === collectionId)
-    if (!collection) {
-      throw new Error('Collection not found')
+    try {
+      // Get current collection
+      const collection = await this.getById(collectionId)
+      collection.propertyIds = collection.propertyIds.filter(id => id !== propertyId)
+      return await this.update(collectionId, collection)
+    } catch (error) {
+      console.error('Error removing property from collection:', error)
+      throw error
     }
-    collection.propertyIds = collection.propertyIds.filter(id => id !== propertyId)
-    this.saveToStorage()
-    return { ...collection }
   }
 }
 

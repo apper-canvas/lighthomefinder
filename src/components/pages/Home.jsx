@@ -28,16 +28,17 @@ const Home = () => {
     location: ''
   })
 
-  const loadProperties = async (searchFilters = filters) => {
+const loadProperties = async (searchFilters = filters) => {
     setLoading(true)
     setError(null)
     
     try {
       const result = await propertyService.getAll(searchFilters)
-      setProperties(result)
+      setProperties(result || [])
     } catch (err) {
       setError(err.message || 'Failed to load properties')
       toast.error('Failed to load properties')
+      setProperties([])
     } finally {
       setLoading(false)
     }
@@ -51,7 +52,7 @@ const Home = () => {
     // Update filters when switching between Buy and Rent
     const newFilters = {
       ...filters,
-      type: isRentPage ? 'apartment' : 'all'
+      type: isRentPage ? 'Apartment' : 'all'
     }
     setFilters(newFilters)
     loadProperties(newFilters)

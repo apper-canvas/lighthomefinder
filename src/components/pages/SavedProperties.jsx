@@ -18,14 +18,16 @@ const SavedProperties = () => {
   const [showCreateCollection, setShowCreateCollection] = useState(false)
   const [newCollectionName, setNewCollectionName] = useState('')
 
-  const loadSavedProperties = async () => {
+const loadSavedProperties = async () => {
     setLoading(true)
     setError(null)
     
     try {
-      const savedIds = JSON.parse(localStorage.getItem('savedProperties') || '[]')
-      if (savedIds.length > 0) {
-        const properties = await propertyService.getByIds(savedIds)
+      const collections = await collectionService.getAll()
+      const savedCollection = collections.find(c => c.name === 'Saved Properties')
+      
+      if (savedCollection && savedCollection.propertyIds.length > 0) {
+        const properties = await propertyService.getByIds(savedCollection.propertyIds)
         setSavedProperties(properties)
       } else {
         setSavedProperties([])
@@ -54,6 +56,7 @@ const SavedProperties = () => {
     // Listen for changes to saved properties
     const handleStorageChange = () => {
       loadSavedProperties()
+      loadCollections()
     }
     
     window.addEventListener('storage', handleStorageChange)
@@ -78,7 +81,8 @@ const SavedProperties = () => {
 
     try {
       const newCollection = await collectionService.create({
-        name: newCollectionName.trim()
+        name: newCollectionName.trim(),
+        propertyIds: []
       })
       setCollections(prev => [newCollection, ...prev])
       setNewCollectionName('')
