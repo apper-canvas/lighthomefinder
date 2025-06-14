@@ -1,0 +1,177 @@
+[
+  {
+    "id": "1",
+    "title": "Modern Downtown Loft",
+    "price": 525000,
+    "type": "Condo",
+    "bedrooms": 2,
+    "bathrooms": 2,
+    "sqft": 1200,
+    "address": {
+      "street": "123 Main Street",
+      "city": "Seattle",
+      "state": "WA",
+      "zipCode": "98101"
+    },
+    "coordinates": {
+      "lat": 47.6062,
+      "lng": -122.3321
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop"
+    ],
+    "description": "Stunning modern loft in the heart of downtown Seattle. Floor-to-ceiling windows offer breathtaking city views, while the open-concept design creates a spacious and airy atmosphere. Premium finishes throughout.",
+    "features": [
+      "Hardwood floors",
+      "Stainless steel appliances", 
+      "In-unit laundry",
+      "Balcony with city views",
+      "Garage parking",
+      "Gym access"
+    ],
+    "listingDate": "2024-01-15T00:00:00Z",
+    "featured": true
+  },
+  {
+    "id": "2", 
+    "title": "Charming Victorian Home",
+    "price": 750000,
+    "type": "House",
+    "bedrooms": 4,
+    "bathrooms": 3,
+    "sqft": 2400,
+    "address": {
+      "street": "456 Oak Avenue",
+      "city": "Portland",
+      "state": "OR",
+      "zipCode": "97201"
+    },
+    "coordinates": {
+      "lat": 45.5152,
+      "lng": -122.6784
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1449844908441-8829872d2607?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1513584684374-8bab748fbf90?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop"
+    ],
+    "description": "Beautiful Victorian home with original architectural details preserved. This property features a wraparound porch, bay windows, and a completely renovated kitchen with modern amenities.",
+    "features": [
+      "Original hardwood floors",
+      "Renovated kitchen",
+      "Wraparound porch",
+      "Bay windows",
+      "Fireplace",
+      "Large backyard"
+    ],
+    "listingDate": "2024-01-12T00:00:00Z",
+    "featured": true
+  },
+  {
+    "id": "3",
+    "title": "Luxury Waterfront Condo", 
+    "price": 950000,
+    "type": "Condo",
+    "bedrooms": 3,
+    "bathrooms": 2.5,
+    "sqft": 1800,
+    "address": {
+      "street": "789 Harbor Drive",
+      "city": "San Francisco",
+      "state": "CA", 
+      "zipCode": "94105"
+    },
+    "coordinates": {
+      "lat": 37.7749,
+      "lng": -122.4194
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1561753757-d8880c935a71?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop"
+    ],
+    "description": "Exclusive waterfront condominium with panoramic bay views. This luxury unit features high-end finishes, a gourmet kitchen, and access to world-class amenities including concierge service.",
+    "features": [
+      "Panoramic bay views",
+      "Gourmet kitchen",
+      "Marble bathrooms",
+      "Concierge service",
+      "Fitness center",
+      "Rooftop terrace"
+    ],
+    "listingDate": "2024-01-10T00:00:00Z",
+    "featured": true
+  },
+  {
+    "id": "4",
+    "title": "Cozy Suburban Ranch",
+    "price": 425000,
+    "type": "House",
+    "bedrooms": 3,
+    "bathrooms": 2,
+    "sqft": 1600,
+    "address": {
+      "street": "321 Maple Lane",
+      "city": "Austin",
+      "state": "TX",
+      "zipCode": "78701"
+    },
+    "coordinates": {
+      "lat": 30.2672,
+      "lng": -97.7431
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&h=600&fit=crop"
+    ],
+    "description": "Perfect family home in a quiet suburban neighborhood. This well-maintained ranch-style house features an open floor plan, updated kitchen, and a spacious backyard ideal for entertaining.",
+    "features": [
+      "Open floor plan",
+      "Updated kitchen",
+      "Master suite",
+      "Spacious backyard",
+      "Two-car garage",
+      "Near schools"
+    ],
+    "listingDate": "2024-01-08T00:00:00Z",
+    "featured": false
+  },
+  {
+    "id": "5",
+    "title": "Urban Studio Apartment",
+    "price": 285000,
+    "type": "Apartment",
+    "bedrooms": 1,
+    "bathrooms": 1,
+    "sqft": 650,
+    "address": {
+      "street": "654 Broadway",
+      "city": "New York",
+      "state": "NY",
+      "zipCode": "10012"
+    },
+    "coordinates": {
+      "lat": 40.7128,
+      "lng": -74.0060
+    },
+    "images": [
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1484154218962-a197022b5858?w=800&h=600&fit=crop",
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop"
+    ],
+    "description": "Stylish studio apartment in the heart of SoHo. Perfect for young professionals, this unit features modern amenities, high ceilings, and is steps away from trendy restaurants and shopping.",
+    "features": [
+      "High ceilings",
+      "Modern kitchen",
+      "Hardwood floors",
+      "Close to subway",
+      "Doorman building",
+      "Rooftop access"
+    ],
+    "listingDate": "2024-01-05T00:00:00Z",
+    "featured": false
+  }
+]
